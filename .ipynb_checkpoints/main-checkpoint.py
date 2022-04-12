@@ -40,7 +40,7 @@ def main():
     indiv_thr_imgs = dict((key, val > img) for key, val, img in 
                           zip(indiv_thr.keys(),indiv_thr.values(), gray_col))
     #turn thrshd vals into a numpy arrays so we can compute the diff
-    np_indiv_thr = np.array(list(indiv_thr_imgs.values()))
+    np_indiv_thr = rgb2gray(np.array(list(indiv_thr_imgs.values())))
     np_avg_thr = np.array(avg_thr_imgs)
     #get difference b/w each
     diff_imgs = avg_thr_imgs ^ np_indiv_thr
@@ -49,15 +49,17 @@ def main():
     canny_avg = np.zeros((np_avg_thr.shape))
     canny_indiv = np.zeros((np_indiv_thr.shape))
     for ind, img in enumerate(np_avg_thr):
-        canny_avg[ind,] = img    
-        canny_indiv[ind,] = np_indiv_thr[ind,]
+        canny_avg[ind,] = feature.canny(img)   
+        canny_indiv[ind,] = feature.canny(np_indiv_thr[ind,])
     
     # get labels
     canny_avg_label, _ = ndi.label(canny_avg)
     canny_indiv_label, _ = ndi.label(canny_indiv)
     #now overlay
-    canny_avg_label_overlay = label2rgb(canny_avg_label, image=np_avg_thr, bg_label=0)
-    canny_indiv_label_overlay = label2rgb(canny_indiv_label, image=np_indiv_thr, bg_label=0)
+    canny_avg_label_overlay = label2rgb(canny_avg_label, alpha = .7, image=avg_thr_imgs, 
+                                        colors = ['red'], bg_label=0)
+    canny_indiv_label_overlay = label2rgb(canny_indiv_label, alpha = .7, image=avg_thr_imgs, 
+                                        colors = ['red'], bg_label=0)
     
     #save each image collection
     avg_fig = imshow_collection(avg_thr_imgs)
