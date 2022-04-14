@@ -42,7 +42,7 @@ def main():
     indiv_thr_imgs = [np.digitize(img, bins=thr) for thr, img in 
                           zip(indiv_thr.values(), gray_col)]
     #turn thrshd vals into a numpy arrays so we can compute the diff
-    np_indiv_thr = np.array(list(indiv_thr_imgs.values()))
+    np_indiv_thr = np.array(indiv_thr_imgs)
     np_avg_thr = np.array(avg_thr_imgs)
     #get difference b/w each
     diff_imgs = avg_thr_imgs ^ np_indiv_thr
